@@ -2,19 +2,71 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-#title
+st.title("Streamlit 기본 실습")
+
+# Task 1
+st.subheader("Task 1: 기본 UI 컴포넌트")
+
+# 입력 받을 텍스트(이름)
+st.text_input("이름을 입력하세요")
+# 나이 슬라이더
+age = st.slider("나이", min_value=0, max_value=100)
+
+# 좋아하는 색
+color = st.selectbox("좋아하는 색", ["빨강", "초록", "파랑"])
+
+# 체크박스
+agree = st.checkbox("이용 약관에 동의합니다")
+
+# 버튼
+st.button("제출")
+
+# Task2
 st.header("Task 2: 데이터 표시하기")
 st.write("데이터프레임")
 
 df= pd.read_csv("penguins.csv", encoding="utf-8")
 st.dataframe(df)
 
+# Task 3
+st.header("Task 3: 차트 그리기")
+df= pd.read_csv("penguins.csv")
+all_cols= df.columns.tolist()
 
-# Track4
-# st.write("### Task 4:인터랙티브 필터")
+st.markdown("""
+    <style>
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 400 !important;  /* 일반 두께 */
+    }
+    </style>
+""", unsafe_allow_html=True)
+st.markdown("###### 📍모든 컬럼 목록")
+st.markdown("\n".join([f"- **{col}**" for col in all_cols]))
+
+selected_col= st.selectbox("그래프로 볼 컬럼을 선택하세요: ", all_cols)
+st.markdown(f"###### > 선택된 칼럼: {selected_col}")
+
+if pd.api.types.is_numeric_dtype(df[selected_col]):
+    st.subheader("[선 그래프]")
+    st.line_chart(df[selected_col])
+
+    st.subheader("[막대 그래프]")
+    st.bar_chart(df[selected_col])
+
+    st.subheader("[영역 그래프]")
+    st.area_chart(df[selected_col])
+
+else:
+    counts= df[selected_col].value_counts()
+
+    st.subheader("[범주형 막대 그래프]")
+    st.bar_chart(counts)
+
+# Task 4
+st.write("Task 4: 인터랙티브 필터")
 # AI 활용
 
-st.title("🐧 Penguin Dataset Interactive Filter & Visualization (Altair Only)")
+#st.title("🐧 Penguin Dataset Interactive Filter & Visualization (Altair Only)")
 
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요.", type=["csv"])
 
@@ -148,14 +200,16 @@ if uploaded_file:
             )
             st.altair_chart(chart, use_container_width=True)
 
-#title
+
+
+# Task 5
 st.title('Task5: 파일 업로드')
 
 uploaded_file = st.file_uploader("Upload Your data", type="csv")
 
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
-
+    
     st.write("Uploaded Data")
     st.write(df)
 
